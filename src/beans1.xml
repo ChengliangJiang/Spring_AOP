@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--配置bean、切面类对象和代理对象-->
+    <!--  配置UserService-->
+    <bean id="userService" class="com.jcl.service.IUserServiceImpl"></bean>
+    <bean id="studentService" class="com.jcl.service.StudentService"></bean>
+
+    <!--  配置切面类对象-->
+    <bean id="myAspect" class="com.jcl.aspect.MyAspect2"></bean>
+
+
+    <!-- 全自动AOP配置
+     1.在bean中配置aop约束
+     2.配置aop:conifg内容，把切入点和通知结合
+
+     proxy-target-class:使用cglib实现代理
+     expression 表达式：*任意
+                execution(*         com.gyf.service.*.   *       (..))
+                          返回值    包名            类名 方法名  参数
+     -->
+    <aop:config  proxy-target-class="true">
+        <!-- 切入点:
+             expression:表达式
+             每个service的方法前面都开启事务和结束事务
+
+             AOP:用于事务配置&日志记录
+         -->
+        <aop:pointcut id="myPointcut" expression="execution(* com.jcl.service.*.*(..))"/>
+
+        <!-- 通知 关联 切入点-->
+        <aop:advisor advice-ref="myAspect" pointcut-ref="myPointcut"></aop:advisor>
+    </aop:config>
+
+</beans>
